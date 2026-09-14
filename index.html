@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pokémon Shiny Tracker</title>
+<meta name="description" content="Keep track of encounters while hunting shiny Pokémon">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="navbar"><a href="#track">● Shiny Tracker</a></nav>
+
+<div class="container">
+  <ul class="tabs">
+    <li><a href="#track" data-tab="track">Track</a></li>
+    <li><a href="#setup" data-tab="setup">Setup</a></li>
+    <li class="right"><a href="#about" data-tab="about">About</a></li>
+  </ul>
+
+  <section id="track" class="panel">
+    <div class="target-row">
+      <div id="target-box" class="target" hidden>
+        <img id="target-img" alt="">
+      </div>
+      <div class="shinycount" id="count" title="Click to edit">0</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn danger" id="dec">−</button>
+      <button class="btn success" id="inc">+</button>
+    </div>
+    <div id="stats" class="stats">
+      <label><span>Start</span><output id="stat-start"></output></label>
+      <label><span>Probability</span><output id="stat-odds"></output></label>
+      <label><span>B(n,p)</span><output id="stat-binom"></output></label>
+      <label><span>Until 90%</span><output id="stat-remaining"></output></label>
+    </div>
+  </section>
+
+  <section id="setup" class="panel" hidden>
+    <h3>Generation (2–9)</h3>
+    <div class="btn-group" id="gen-group">
+      <button class="btn" data-gen="2">2</button><button class="btn" data-gen="3">3</button>
+      <button class="btn" data-gen="4">4</button><button class="btn" data-gen="5">5</button>
+      <button class="btn" data-gen="6">6</button><button class="btn" data-gen="7">7</button>
+      <button class="btn" data-gen="8">8</button><button class="btn" data-gen="9">9</button>
+    </div>
+
+    <div id="charm-block">
+      <h3>Do you have the Shiny Charm?</h3>
+      <div class="btn-group" id="charm-group">
+        <button class="btn" data-charm="true">Yes</button><button class="btn" data-charm="false">No</button>
+      </div>
+    </div>
+
+    <h3>Hunting Method</h3>
+    <select id="method" class="form-control">
+      <option value="random">Random/SR</option>
+      <option value="masuda">Masuda Method</option>
+      <option value="dex_nav">Dex Nav</option>
+      <option value="safari">Friend Safari</option>
+      <option value="radar">Radar Chaining</option>
+      <option value="fishing">Fishing</option>
+      <option value="sos">S.O.S Battles</option>
+    </select>
+
+    <div id="gen9-block">
+      <h3>Sparkling Power (sandwich)</h3>
+      <div class="btn-group" id="sandwich-group">
+        <button class="btn" data-sandwich="0">None</button><button class="btn" data-sandwich="1">Lv 1</button>
+        <button class="btn" data-sandwich="2">Lv 2</button><button class="btn" data-sandwich="3">Lv 3</button>
+      </div>
+      <h3>Mass Outbreak</h3>
+      <div class="btn-group" id="outbreak-group">
+        <button class="btn" data-outbreak="0">None</button><button class="btn" data-outbreak="1">30+ KO'd</button>
+        <button class="btn" data-outbreak="2">60+ KO'd</button>
+      </div>
+    </div>
+
+    <h3>Target</h3>
+    <input id="target" class="form-control" list="pokemon-list" placeholder="e.g. Sprigatito" autocomplete="off">
+    <datalist id="pokemon-list"></datalist>
+
+    <h3>Start Date</h3>
+    <input id="start-date" type="datetime-local" class="form-control">
+
+    <h3>Show stats on the tracker?</h3>
+    <div class="btn-group" id="stats-group">
+      <button class="btn" data-stats="true">Yes</button><button class="btn" data-stats="false">No</button>
+    </div>
+
+    <h3>Dark Theme</h3>
+    <div class="btn-group" id="theme-group">
+      <button class="btn" data-theme="true">On</button><button class="btn" data-theme="false">Off</button>
+    </div>
+
+    <p class="center"><button class="btn danger" id="reset">⟲ Reset</button></p>
+  </section>
+
+  <section id="about" class="panel" hidden>
+    <h3>Pokémon Shiny Tracker</h3>
+    <p>A clone of <a href="https://shinytrack.night.coffee">shinytrack.night.coffee</a> by Tim Gourley, extended with every Pokémon through Generation 9 (Scarlet/Violet and its DLC) and Gen 9 shiny mechanics.</p>
+    <p>Pokémon and all Pokémon data is owned by The Pokémon Company, used without permission. Sprites are served by <a href="https://play.pokemonshowdown.com/">Pokémon Showdown</a>.</p>
+    <h3>FAQ</h3>
+    <ul>
+      <li><strong>How do I use this?</strong><br>On the Setup tab pick your game's generation, whether you have the Shiny Charm, and your hunting method. In Gen 9 you can also set your sandwich's Sparkling Power level and mass-outbreak progress. Optionally type a target Pokémon for motivation, then head to Track and count encounters.</li>
+      <li><strong>Gen 9 odds?</strong><br>Base 1/4096. Each bonus adds extra rolls: Shiny Charm +2, Sparkling Power Lv 1/2/3 adds 1/2/3, mass outbreaks add 1 after 30 KOs and 2 after 60. Everything stacked is 1/512. Masuda Method eggs are 1/683, or 1/512 with the charm; sandwiches don't affect eggs.</li>
+      <li><strong>What does <em>B(n,p)</em> mean?</strong><br>The binomial distribution: the chance you would already have found at least one shiny in the encounters you've done so far.</li>
+      <li><strong>And "Until 90%"?</strong><br>How many more encounters until that chance hits 90%. If you haven't found one by then, you might consider taking a break.</li>
+    </ul>
+    <p>All numbers are probabilities, not guarantees. Your settings and count are stored only in this browser (localStorage); nothing is sent anywhere.</p>
+    <h3>License: MIT</h3>
+  </section>
+</div>
+
+<dialog id="edit-dialog">
+  <form method="dialog">
+    <h4>Edit Encounters</h4>
+    <input id="edit-count" class="shinycount-input" type="number" min="0" step="1">
+    <div class="btn-row">
+      <button class="btn success" value="save">Save</button>
+      <button class="btn" value="cancel">Cancel</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="pokemon.js"></script>
+<script src="odds.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
