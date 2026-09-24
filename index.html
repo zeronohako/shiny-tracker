@@ -18,16 +18,8 @@
   </ul>
 
   <section id="track" class="panel">
-    <div class="target-row">
-      <div id="target-box" class="target" hidden>
-        <img id="target-img" alt="">
-      </div>
-      <div class="shinycount" id="count" title="Click to edit">0</div>
-    </div>
-    <div class="btn-row">
-      <button class="btn danger" id="dec">−</button>
-      <button class="btn success" id="inc">+</button>
-    </div>
+    <div id="hunts" class="hunts"></div>
+    <p class="center add-row"><button class="btn" id="add">+ Add hunt</button></p>
     <div id="stats" class="stats">
       <label><span>Start</span><output id="stat-start"></output></label>
       <label><span>Probability</span><output id="stat-odds"></output></label>
@@ -37,6 +29,7 @@
   </section>
 
   <section id="setup" class="panel" hidden>
+    <p class="editing">Editing hunt: <strong id="editing"></strong></p>
     <h3>Generation (2–9)</h3>
     <div class="btn-group" id="gen-group">
       <button class="btn" data-gen="2">2</button><button class="btn" data-gen="3">3</button>
@@ -93,7 +86,7 @@
       <button class="btn" data-theme="true">On</button><button class="btn" data-theme="false">Off</button>
     </div>
 
-    <p class="center"><button class="btn danger" id="reset">⟲ Reset</button></p>
+    <p class="center"><button class="btn danger" id="reset">⟲ Reset count</button></p>
   </section>
 
   <section id="about" class="panel" hidden>
@@ -102,7 +95,7 @@
     <p>Pokémon and all Pokémon data is owned by The Pokémon Company, used without permission. Sprites are served by <a href="https://play.pokemonshowdown.com/">Pokémon Showdown</a>.</p>
     <h3>FAQ</h3>
     <ul>
-      <li><strong>How do I use this?</strong><br>On the Setup tab pick your game's generation, whether you have the Shiny Charm, and your hunting method. In Gen 9 you can also set your sandwich's Sparkling Power level and mass-outbreak progress. Optionally type a target Pokémon for motivation, then head to Track and count encounters.</li>
+      <li><strong>How do I use this?</strong><br>On the Setup tab pick your game's generation, whether you have the Shiny Charm, and your hunting method. In Gen 9 you can also set your sandwich's Sparkling Power level and mass-outbreak progress. Optionally type a target Pokémon for motivation, then head to Track and count encounters. Use <em>+ Add hunt</em> to hunt several Pokémon at once; each has its own count and settings, and Setup edits the one selected on Track.</li>
       <li><strong>Gen 9 odds?</strong><br>Base 1/4096. Each bonus adds extra rolls: Shiny Charm +2, Sparkling Power Lv 1/2/3 adds 1/2/3, mass outbreaks add 1 after 30 KOs and 2 after 60. Everything stacked is 1/512. Masuda Method eggs are 1/683, or 1/512 with the charm; sandwiches don't affect eggs.</li>
       <li><strong>What does <em>B(n,p)</em> mean?</strong><br>The binomial distribution: the chance you would already have found at least one shiny in the encounters you've done so far.</li>
       <li><strong>And "Until 90%"?</strong><br>How many more encounters until that chance hits 90%. If you haven't found one by then, you might consider taking a break.</li>

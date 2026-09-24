@@ -40,4 +40,19 @@ function binomialPct(s) { return 100 * (1 - Math.pow(1 - odds(s), s.encounters))
 // Encounters left until that chance reaches 90%
 function remainingTo90(s) { return Math.ceil(Math.log(0.1) / Math.log(1 - odds(s))) - s.encounters; }
 
-if (typeof module !== 'undefined') module.exports = { oddsDenominator: oddsDenominator, oddsText: oddsText, binomialPct: binomialPct, remainingTo90: remainingTo90 };
+// Hunt state. A new hunt copies the game settings of `from`, if given.
+var HUNT = { generation: 9, shiny_charm: false, encounters: 0, encounter_method: 'random', sandwich: 0, outbreak: 0, target: '' };
+function newHunt(from) {
+  var game = from ? { generation: from.generation, shiny_charm: from.shiny_charm, encounter_method: from.encounter_method } : {};
+  return Object.assign({}, HUNT, game, { start_date: new Date().toISOString() });
+}
+// `saved` is the stored state; `old` is the pre-multi-hunt single `settings` object, migrated into hunt #1
+function loadState(saved, old) {
+  if (saved && saved.hunts && saved.hunts.length) return saved;
+  old = old || {};
+  var h = Object.assign(newHunt(), old);
+  delete h.show_stats; delete h.dark_theme;
+  return { hunts: [h], selected: 0, show_stats: old.show_stats !== false, dark_theme: !!old.dark_theme };
+}
+
+if (typeof module !== 'undefined') module.exports = { oddsDenominator: oddsDenominator, oddsText: oddsText, binomialPct: binomialPct, remainingTo90: remainingTo90, newHunt: newHunt, loadState: loadState };

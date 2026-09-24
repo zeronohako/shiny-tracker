@@ -1,5 +1,5 @@
 // node test_odds.js
-const { oddsText, binomialPct, remainingTo90 } = require('./odds.js');
+const { oddsText, binomialPct, remainingTo90, newHunt, loadState } = require('./odds.js');
 const S = (o) => Object.assign({ generation: 9, shiny_charm: false, encounters: 0, encounter_method: 'random', sandwich: 0, outbreak: 0 }, o);
 const eq = (a, b, msg) => { if (a !== b) throw new Error(msg + ': got ' + a + ', want ' + b); };
 
@@ -17,4 +17,15 @@ eq(oddsText(S({ sandwich: 3, outbreak: 2, shiny_charm: true })), '1/512', 'gen9 
 eq(oddsText(S({ encounter_method: 'masuda', shiny_charm: true })), '1/512', 'gen9 masuda charm');
 eq(Math.round(binomialPct(S({ encounters: 4096 }))), 63, 'binomial ~63% at 1/p tries');
 eq(remainingTo90(S({ encounters: 0 })), 9431, 'until 90% at 1/4096');
+
+const mig = loadState(null, { generation: 7, encounters: 123, target: 'Eevee', dark_theme: true, show_stats: false });
+eq(mig.hunts.length, 1, 'migrate: one hunt');
+eq(mig.hunts[0].encounters, 123, 'migrate: count kept');
+eq(mig.hunts[0].target, 'Eevee', 'migrate: target kept');
+eq(mig.hunts[0].dark_theme, undefined, 'migrate: globals stripped from hunt');
+eq(mig.dark_theme && !mig.show_stats, true, 'migrate: globals kept');
+eq(loadState(null, null).hunts[0].generation, 9, 'fresh: default hunt');
+eq(loadState(mig, null), mig, 'saved state wins');
+const copy = newHunt({ generation: 8, shiny_charm: true, encounter_method: 'masuda', encounters: 50, target: 'X' });
+eq(copy.generation + copy.encounter_method + copy.encounters + copy.target, '8masuda0', 'newHunt copies game only');
 console.log('ok');
