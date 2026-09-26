@@ -4,7 +4,7 @@ var SPRITES = 'https://play.pokemonshowdown.com/sprites/';
 var state = loadState(JSON.parse(localStorage.getItem('state')), JSON.parse(localStorage.getItem('settings')));
 function hunt() { return state.hunts[state.selected] || state.hunts[0]; }
 
-function save() { localStorage.setItem('state', JSON.stringify(state)); render(); }
+function save() { localStorage.setItem('state', JSON.stringify(state)); render(); queuePush(); }
 
 function esc(t) { return String(t).replace(/[&<>"']/g, function (c) { return '&#' + c.charCodeAt(0) + ';'; }); }
 
@@ -127,3 +127,4 @@ showTab();
 render();
 setInterval(function () { $('stat-start').value = timeAgo(hunt().start_date); }, 60000);
 $('pokemon-list').innerHTML = Object.keys(POKEMON).map(function (n) { return '<option value="' + n + '">'; }).join('');
+initSync();

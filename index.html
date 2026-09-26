@@ -87,6 +87,20 @@
     </div>
 
     <p class="center"><button class="btn danger" id="reset">⟲ Reset count</button></p>
+
+    <h3>Sync</h3>
+    <form id="sync-out" class="sync-form">
+      <input id="sync-user" class="form-control" placeholder="Username" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+      <input id="sync-pass" class="form-control" type="password" placeholder="Password" autocomplete="current-password" required>
+      <div class="btn-group">
+        <button class="btn success">Sign in</button><button class="btn" type="button" id="sync-register">Create account</button>
+      </div>
+    </form>
+    <div id="sync-in" hidden>
+      <p id="sync-status"></p>
+      <button class="btn" id="sync-signout">Sign out</button>
+    </div>
+    <p id="sync-error" class="error"></p>
   </section>
 
   <section id="about" class="panel" hidden>
@@ -100,7 +114,7 @@
       <li><strong>What does <em>B(n,p)</em> mean?</strong><br>The binomial distribution: the chance you would already have found at least one shiny in the encounters you've done so far.</li>
       <li><strong>And "Until 90%"?</strong><br>How many more encounters until that chance hits 90%. If you haven't found one by then, you might consider taking a break.</li>
     </ul>
-    <p>All numbers are probabilities, not guarantees. Your settings and count are stored only in this browser (localStorage); nothing is sent anywhere.</p>
+    <p>All numbers are probabilities, not guarantees. Your settings and count are stored in this browser (localStorage). If you sign in under Setup → Sync, they're also saved to this site's server so your other devices can load them.</p>
     <h3>License: MIT</h3>
   </section>
 </div>
@@ -118,6 +132,7 @@
 
 <script src="pokemon.js"></script>
 <script src="odds.js"></script>
+<script src="sync.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
