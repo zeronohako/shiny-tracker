@@ -1,7 +1,7 @@
 // Cloud sync. Spec: docs/superpowers/specs/2026-09-25-cloud-sync-design.md
 // While signed in, localStorage.sync = { username, token, synced_at, dirty }.
 var sync = JSON.parse(localStorage.getItem('sync'));
-var pushTimer;
+var pushTimer, pushing;
 
 function saveSync() {
   if (sync) localStorage.setItem('sync', JSON.stringify(sync)); else localStorage.removeItem('sync');
@@ -42,23 +42,28 @@ function queuePush() {
 }
 
 function push() {
-  if (!sync) return;
+  if (!sync || pushing) return; // one PUT at a time, so an older one can't land last
+  pushing = true;
   var sent = JSON.stringify(state);
   api('PUT', null, { state: state }).then(function (r) {
+    pushing = false;
     if (r.status === 401) return signedOut('Signed out, sign in again');
     if (r.status !== 200 || !sync) return renderSync(); // stays dirty; retried on next save, focus or 'online'
     sync.synced_at = r.body.updated_at;
-    if (JSON.stringify(state) === sent) sync.dirty = false; // else a newer change already queued its own push
+    if (JSON.stringify(state) === sent) sync.dirty = false;
     saveSync();
+    if (sync.dirty) push(); // changed while this PUT was out
   });
 }
 
 function pull() {
   if (!sync) return;
   if (sync.dirty) return push(); // our unsent changes are newer: last write wins
+  var seen = sync.synced_at;
   api('GET').then(function (r) {
     if (r.status === 401) return signedOut('Signed out, sign in again');
-    if (r.status !== 200 || !sync || sync.dirty) return; // dirty: a tap landed mid-request, keep it
+    // dirty or a newer synced_at: a tap landed (or was pushed) mid-request, keep it
+    if (r.status !== 200 || !sync || sync.dirty || sync.synced_at !== seen) return;
     if (r.body.updated_at !== sync.synced_at) useServerState(r.body.state, r.body.updated_at);
   });
 }
@@ -92,6 +97,7 @@ function initSync() {
   $('sync-signout').onclick = function () { api('POST', 'logout'); signedOut(); };
   document.addEventListener('visibilitychange', function () { if (!document.hidden) pull(); });
   window.addEventListener('online', pull);
+  window.addEventListener('focus', pull);
   setInterval(renderSync, 60000);
   renderSync();
   pull();
