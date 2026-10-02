@@ -47,7 +47,7 @@
   - `PUT /api/state` `{ state }` → 200 `{ updated_at }` | 400 | 401
   - Every error body is `{ error: "<message shown to the user>" }`.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `test_api.js`:
 
@@ -141,12 +141,12 @@ const eq = (a, b, msg) => { if (a !== b) throw new Error(msg + ': got ' + a + ',
 })().catch((e) => { console.error(e); process.exit(1); });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node test_api.js`
 Expected: FAIL with `Error: Cannot find module './api/state.js'`
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 Create `api/state.js`:
 
@@ -249,12 +249,12 @@ module.exports = async function handler(req, res) {
 };
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `node test_api.js && node test_odds.js`
 Expected: `ok` twice.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add api/state.js test_api.js
@@ -277,7 +277,7 @@ git commit -m "Add cloud sync API: accounts and per-user saved state in Upstash 
 
 `sync.js` is loaded **before** `app.js`. It only declares functions and reads `localStorage` at the top level, so it doesn't matter that `state`/`render` don't exist yet. They're only used when the functions run.
 
-- [ ] **Step 1: Create `sync.js`**
+- [x] **Step 1: Create `sync.js`**
 
 ```js
 // Cloud sync. Spec: docs/superpowers/specs/2026-09-25-cloud-sync-design.md
@@ -380,7 +380,7 @@ function initSync() {
 }
 ```
 
-- [ ] **Step 2: Hook it into `app.js`**
+- [x] **Step 2: Hook it into `app.js`**
 
 Change line 4 from:
 
@@ -400,7 +400,7 @@ Append at the very end of `app.js` (after the `$('pokemon-list').innerHTML = ...
 initSync();
 ```
 
-- [ ] **Step 3: Add the markup to `index.html`**
+- [x] **Step 3: Add the markup to `index.html`**
 
 In `#setup`, after `<p class="center"><button class="btn danger" id="reset">⟲ Reset count</button></p>` and before `</section>`, add:
 
@@ -441,7 +441,7 @@ Change the scripts at the bottom to load `sync.js` before `app.js`:
 <script src="app.js"></script>
 ```
 
-- [ ] **Step 4: Add styles to the end of `style.css`**
+- [x] **Step 4: Add styles to the end of `style.css`**
 
 `display: flex` would override the `hidden` attribute, hence `:not([hidden])`:
 
@@ -450,14 +450,14 @@ Change the scripts at the bottom to load `sync.js` before `app.js`:
 .error { color: var(--red); }
 ```
 
-- [ ] **Step 5: Check that nothing broke signed-out**
+- [x] **Step 5: Check that nothing broke signed-out**
 
 Run: `node --check sync.js && node --check app.js && node test_odds.js && node test_api.js`
 Expected: no syntax errors, `ok` twice.
 
 Then open `index.html` directly in a browser (`file://`). Expected: the Sync block shows the sign-in form; "+" and "−" still work and survive a reload; no console errors. Pressing Sign in shows "Can't reach the server" (there's no API on `file://`).
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add sync.js app.js index.html style.css
@@ -472,11 +472,11 @@ The user does steps 1–2 in the Vercel dashboard/terminal; the implementer can'
 
 **Files:** none.
 
-- [ ] **Step 1 (user): Add storage**
+- [x] **Step 1 (user): Add storage**
 
 In the Vercel dashboard → project `shiny-tracker` → Storage → add **Upstash Redis** (free plan) and connect it to all environments. This sets `KV_REST_API_URL` and `KV_REST_API_TOKEN`.
 
-- [ ] **Step 2 (user): Run locally**
+- [x] **Step 2 (user): Run locally**
 
 ```bash
 npm i -g vercel   # if not installed
@@ -486,7 +486,7 @@ vercel dev
 
 Make sure `.env.local` is in `.gitignore` before committing anything (add the line if missing).
 
-- [ ] **Step 3: Two-browser check** against the `vercel dev` URL, using a normal window (A) and a private window (B):
+- [x] **Step 3: Two-browser check** against the `vercel dev` URL, using a normal window (A) and a private window (B):
 
 1. A: add a hunt with a target, count to 5, then Setup → Create account `test-user` / `password123`. Expected: "Signed in as test-user · Synced just now".
 2. B: Sign in as `TEST-USER ` (caps, trailing space). Expected: B shows A's hunts with count 5.
