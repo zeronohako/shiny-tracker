@@ -46,6 +46,15 @@ h3 { font-size: 18px; margin: 20px 0 8px; }
 .hunt .remove { font-size: 14px; background: none; border: 0; opacity: .6; }
 .hunt .count { font-size: 28px; font-weight: bold; min-width: 2ch; background: none; border: 0; color: inherit; cursor: pointer; }
 .add-row { margin-top: 12px; }
+.hunts.focus .hunt:not(.selected), .hunts.focus ~ .add-row { display: none; }
+/* large view, modeled on the original tracker: sprite + count side by side, joined −/+ bar below */
+.hunts.focus .hunt { position: relative; display: grid; grid-template-columns: 1fr 1fr; grid-template-areas: "img count" "info info" "dec inc"; row-gap: 12px; padding: 16px; }
+.hunts.focus .hunt img { grid-area: img; justify-self: center; width: auto; height: auto; max-width: 110px; }
+.hunts.focus .hunt .info { grid-area: info; align-items: center; }
+.hunts.focus .hunt .count { grid-area: count; font-size: 3em; }
+.hunts.focus .hunt [data-act=dec] { grid-area: dec; border-radius: 4px 0 0 4px; }
+.hunts.focus .hunt [data-act=inc] { grid-area: inc; border-radius: 0 4px 4px 0; }
+.hunts.focus .hunt .remove { position: absolute; top: 4px; right: 4px; padding: 4px 8px; }
 .editing { margin-top: 0; }
 
 .stats { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }

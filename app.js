@@ -1,6 +1,7 @@
 var $ = function (id) { return document.getElementById(id); };
 var SPRITES = 'https://play.pokemonshowdown.com/sprites/';
 
+var focused = false; // per-device view, not synced
 var state = loadState(JSON.parse(localStorage.getItem('state')), JSON.parse(localStorage.getItem('settings')));
 function hunt() { return state.hunts[state.selected] || state.hunts[0]; }
 
@@ -47,6 +48,7 @@ function render() {
   document.body.classList.toggle('dark', state.dark_theme);
   // Track tab
   $('hunts').innerHTML = state.hunts.map(card).join('');
+  $('hunts').classList.toggle('focus', focused);
   $('stats').hidden = !state.show_stats;
   $('stat-start').value = timeAgo(h.start_date);
   $('stat-odds').value = oddsText(h);
@@ -92,6 +94,7 @@ $('hunts').onclick = function (e) {
     state.selected = Math.min(state.selected > i ? state.selected - 1 : state.selected, state.hunts.length - 1);
     return save();
   }
+  if (!act) focused = !focused;
   state.selected = i;
   if (act === 'inc') h.encounters++;
   if (act === 'dec' && h.encounters > 0) h.encounters--;
@@ -107,6 +110,16 @@ $('edit-dialog').onclose = function () {
   if ($('edit-dialog').returnValue !== 'save') return;
   hunt().encounters = Math.max(0, Math.floor(+$('edit-count').value) || 0); save();
 };
+
+var KEYS = { '+': 1, '=': 1, ' ': 1, ArrowUp: 1, '-': -1, ArrowDown: -1 };
+document.addEventListener('keydown', function (e) {
+  if ($('track').hidden || $('edit-dialog').open || e.ctrlKey || e.metaKey || e.altKey || e.target.closest('input, select, textarea')) return;
+  if (e.key === 'Escape' && focused) { focused = false; return render(); }
+  var d = KEYS[e.key]; if (!d) return;
+  e.preventDefault(); // stops Space also clicking a focused button, arrows scrolling
+  if (e.repeat) return;
+  var h = hunt(); h.encounters = Math.max(0, h.encounters + d); save();
+});
 
 bindGroup('gen-group', 'gen', 'generation', Number);
 bindGroup('charm-group', 'charm', 'shiny_charm', toBool);
