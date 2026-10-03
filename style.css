@@ -39,7 +39,7 @@ h3 { font-size: 18px; margin: 20px 0 8px; }
 .hunts { display: flex; flex-direction: column; gap: 8px; }
 .hunt { display: flex; align-items: center; gap: 6px; padding: 8px; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; }
 .hunt.selected { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
-.hunt img { width: 56px; height: 56px; object-fit: contain; image-rendering: pixelated; }
+.hunt .sprite { width: 56px; height: 56px; object-fit: contain; image-rendering: pixelated; }
 .hunt .info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .hunt .info b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .hunt .btn { font-size: 22px; padding: 4px 12px; border-radius: 4px; }
@@ -49,7 +49,9 @@ h3 { font-size: 18px; margin: 20px 0 8px; }
 .hunts.focus .hunt:not(.selected), .hunts.focus ~ .add-row { display: none; }
 /* large view, modeled on the original tracker: sprite + count side by side, joined −/+ bar below */
 .hunts.focus .hunt { position: relative; display: grid; grid-template-columns: 1fr 1fr; grid-template-areas: "img count" "info info" "dec inc"; row-gap: 12px; padding: 16px; }
-.hunts.focus .hunt img { grid-area: img; justify-self: center; width: auto; height: auto; max-width: 110px; }
+.hunts.focus .hunt .sprite { grid-area: img; justify-self: center; width: auto; height: auto; max-width: 110px; }
+/* trimmed Gen 2-4 sprites are drawn at their in-game size, so double them here */
+.hunts.focus .hunt svg.sprite { width: calc(var(--w) * 2px); }
 .hunts.focus .hunt .info { grid-area: info; align-items: center; }
 .hunts.focus .hunt .count { grid-area: count; font-size: 3em; }
 .hunts.focus .hunt [data-act=dec] { grid-area: dec; border-radius: 4px 0 0 4px; }

@@ -9,12 +9,16 @@ function save() { localStorage.setItem('state', JSON.stringify(state)); render()
 
 function esc(t) { return String(t).replace(/[&<>"']/g, function (c) { return '&#' + c.charCodeAt(0) + ';'; }); }
 
-// Shiny sprite URLs to try in order: the hunt's own game (Gen 2-5; Gen 5 animated), then the modern animated one.
-// Later ones cover Pokémon or forms that game's folder doesn't have.
-function spriteUrls(h, id) {
-  var g = h.generation;
-  var own = g === 5 ? ['gen5ani-shiny/' + id + '.gif'] : g < 5 ? ['gen' + g + '-shiny/' + id + '.png'] : [];
-  return own.concat('ani-shiny/' + id + '.gif', 'gen5-shiny/' + id + '.png').map(function (p) { return SPRITES + p; });
+// The hunt's own game's shiny sprite. Gen 2-4 sprites sit small in a mostly empty 96x96 canvas,
+// so they're drawn as an SVG showing just the Pokémon (CROPS, from sprites.js); Gen 5 uses its animated ones.
+// Anything else, or a Pokémon that game doesn't have, gets the modern animated sprite.
+function sprite(h, id) {
+  var g = h.generation, c = (CROPS[g] || {})[id], name = esc(h.target);
+  if (c) return '<svg class="sprite" viewBox="' + c.join(' ') + '" width="' + c[2] + '" height="' + c[3] + '" style="--w:' + c[2] + '" role="img" aria-label="' + name + '">' +
+    '<image href="' + SPRITES + 'gen' + g + '-shiny/' + id + '.png" width="96" height="96"/></svg>';
+  var urls = (g === 5 ? ['gen5ani-shiny/' + id + '.gif'] : []).concat('ani-shiny/' + id + '.gif', 'gen5-shiny/' + id + '.png')
+    .map(function (p) { return SPRITES + p; });
+  return '<img class="sprite" src="' + urls[0] + '" data-next="' + urls.slice(1).join(' ') + '" onerror="nextSprite(this)" alt="' + name + '">';
 }
 function nextSprite(img) {
   var rest = img.dataset.next.split(' ');
@@ -25,9 +29,9 @@ function nextSprite(img) {
 
 // ponytail: re-renders the whole list on every change (restarts sprite animations); patch per card if that bugs you
 function card(h, i) {
-  var id = POKEMON[h.target], urls = id && spriteUrls(h, id);
+  var id = POKEMON[h.target];
   return '<div class="hunt' + (h === hunt() ? ' selected' : '') + '" data-i="' + i + '">' +
-    (id ? '<img src="' + urls[0] + '" data-next="' + urls.slice(1).join(' ') + '" onerror="nextSprite(this)" alt="' + esc(h.target) + '">' : '') +
+    (id ? sprite(h, id) : '') +
     '<div class="info"><b>' + esc(h.target || 'New hunt') + '</b><small>Gen ' + h.generation + ' · ' + oddsText(h) + '</small></div>' +
     '<button class="btn danger" data-act="dec" aria-label="Decrease">−</button>' +
     '<button class="count" data-act="edit" title="Click to edit">' + h.encounters.toLocaleString() + '</button>' +
