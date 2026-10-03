@@ -9,11 +9,25 @@ function save() { localStorage.setItem('state', JSON.stringify(state)); render()
 
 function esc(t) { return String(t).replace(/[&<>"']/g, function (c) { return '&#' + c.charCodeAt(0) + ';'; }); }
 
+// Shiny sprite URLs to try in order: the hunt's own game (Gen 2-5; Gen 5 animated), then the modern animated one.
+// Later ones cover Pokémon or forms that game's folder doesn't have.
+function spriteUrls(h, id) {
+  var g = h.generation;
+  var own = g === 5 ? ['gen5ani-shiny/' + id + '.gif'] : g < 5 ? ['gen' + g + '-shiny/' + id + '.png'] : [];
+  return own.concat('ani-shiny/' + id + '.gif', 'gen5-shiny/' + id + '.png').map(function (p) { return SPRITES + p; });
+}
+function nextSprite(img) {
+  var rest = img.dataset.next.split(' ');
+  img.src = rest.shift();
+  img.dataset.next = rest.join(' ');
+  if (!rest.length) img.onerror = null;
+}
+
 // ponytail: re-renders the whole list on every change (restarts sprite animations); patch per card if that bugs you
 function card(h, i) {
-  var id = POKEMON[h.target];
+  var id = POKEMON[h.target], urls = id && spriteUrls(h, id);
   return '<div class="hunt' + (h === hunt() ? ' selected' : '') + '" data-i="' + i + '">' +
-    (id ? '<img src="' + SPRITES + 'ani-shiny/' + id + '.gif" onerror="this.onerror=null;this.src=\'' + SPRITES + 'gen5-shiny/' + id + '.png\'" alt="' + esc(h.target) + '">' : '') +
+    (id ? '<img src="' + urls[0] + '" data-next="' + urls.slice(1).join(' ') + '" onerror="nextSprite(this)" alt="' + esc(h.target) + '">' : '') +
     '<div class="info"><b>' + esc(h.target || 'New hunt') + '</b><small>Gen ' + h.generation + ' · ' + oddsText(h) + '</small></div>' +
     '<button class="btn danger" data-act="dec" aria-label="Decrease">−</button>' +
     '<button class="count" data-act="edit" title="Click to edit">' + h.encounters.toLocaleString() + '</button>' +
